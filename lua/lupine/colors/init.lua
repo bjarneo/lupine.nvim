@@ -1,0 +1,172 @@
+local Util = require("lupine.utils")
+
+local M = {}
+
+---@class lupine.Palette
+---@field accent string Primary accent
+---@field cursor string Cursor color
+---@field foreground string Foreground alias
+---@field background string Background alias
+---@field selection_foreground string Selection foreground
+---@field selection_background string Selection background
+---@field bg string Main background
+---@field lighter_bg string Highlighted lines, cursorline
+---@field selection string Visual selection
+---@field muted string Comments, line numbers, muted text
+---@field dark_fg string Secondary text, dark foreground
+---@field fg string Main foreground
+---@field light_fg string Light foreground
+---@field bright_fg string Brightest foreground
+---@field red string Red
+---@field yellow string Yellow
+---@field orange string Orange
+---@field green string Green
+---@field cyan string Cyan
+---@field blue string Blue
+---@field purple string Purple
+---@field brown string Brown, escape sequences
+---@field dark_bg string Darker background, sidebars
+---@field darker_bg string Darkest background
+---@field bright_red string Bright red
+---@field bright_yellow string Bright yellow
+---@field bright_green string Bright green
+---@field bright_cyan string Bright cyan
+---@field bright_blue string Bright blue
+---@field bright_purple string Bright purple
+local palette = {
+  bg = "#fafafa",
+  dark_bg = "#f0f0f0",
+  darker_bg = "#e8e8e8",
+  lighter_bg = "#ececec",
+
+  fg = "#212121",
+  light_fg = "#2f2f2f",
+  bright_fg = "#000000",
+  dark_fg = "#6e6e6e",
+  muted = "#9a9a9a",
+
+  red = "#c900c4",
+  yellow = "#026fde",
+  orange = "#d126cd",
+  green = "#0a8fb8",
+  cyan = "#0c67de",
+  blue = "#3264eb",
+  purple = "#8a4ad7",
+  brown = "#7d177b",
+
+  bright_red = "#f930fb",
+  bright_yellow = "#358fff",
+  bright_green = "#2bb3d9",
+  bright_cyan = "#3986ff",
+  bright_blue = "#5482ff",
+  bright_purple = "#b363ff",
+
+  accent = "#3264eb",
+  cursor = "#212121",
+  foreground = "#212121",
+  background = "#fafafa",
+  selection = "#c8d4ff",
+  selection_foreground = "#212121",
+  selection_background = "#c8d4ff",
+}
+
+---Setup the color palette. Caller is expected to pass an already-
+---resolved `lupine.Config` (e.g. via `lupine.config.extend`); this
+---function does not re-extend.
+---@param opts lupine.Config
+---@return ColorScheme
+function M.setup(opts)
+  ---@class ColorScheme: lupine.Palette
+  local colors = vim.deepcopy(palette)
+
+  Util.bg = colors.bg
+  Util.fg = colors.fg
+
+  colors.none = "NONE"
+
+  -- Git colors
+  colors.git = {
+    add = colors.green,
+    delete = colors.red,
+    change = colors.orange,
+    ignore = colors.muted,
+  }
+
+  -- Diff colors (blended backgrounds)
+  colors.diff = {
+    add = Util.blend_bg(colors.green, 0.25),
+    delete = Util.blend_bg(colors.red, 0.25),
+    change = Util.blend_bg(colors.selection, 0.15),
+    text = colors.selection,
+  }
+
+  -- Derived colors
+  colors.black = Util.blend_bg(colors.bg, 0.8, colors.bg)
+  colors.border_highlight = Util.blend_bg(colors.blue, 0.8)
+  colors.border = colors.muted
+
+  -- UI backgrounds
+  colors.bg_popup = colors.dark_bg
+  colors.bg_statusline = colors.dark_bg
+
+  colors.bg_sidebar = opts.styles.sidebars == "transparent" and colors.none
+    or opts.styles.sidebars == "dark" and colors.dark_bg
+    or colors.bg
+
+  colors.bg_float = opts.styles.floats == "transparent" and colors.none
+    or opts.styles.floats == "dark" and colors.dark_bg
+    or colors.bg
+
+  -- Selection and search
+  colors.bg_visual = colors.selection
+  colors.bg_search = Util.blend_bg(colors.blue, 0.4)
+  colors.fg_sidebar = colors.fg
+  colors.fg_float = colors.fg
+
+  -- Diagnostics
+  colors.error = colors.red
+  colors.warning = colors.yellow
+  colors.info = colors.blue
+  colors.hint = colors.cyan
+  colors.todo = colors.bright_blue
+
+  -- Subtle highlights
+  colors.subtle_bg = Util.blend_bg(colors.fg, 0.10)
+  colors.cursorline_bg = Util.blend_bg(colors.fg, 0.20)
+
+  -- Rainbow colors (for indent guides, etc.)
+  colors.rainbow = {
+    colors.blue,
+    colors.yellow,
+    colors.green,
+    colors.cyan,
+    colors.purple,
+    colors.orange,
+    colors.red,
+    colors.brown,
+  }
+
+  -- Terminal colors
+  colors.terminal = {
+    black = colors.black,
+    black_bright = colors.lighter_bg,
+    red = colors.red,
+    red_bright = colors.bright_red,
+    green = colors.green,
+    green_bright = colors.bright_green,
+    yellow = colors.yellow,
+    yellow_bright = colors.bright_yellow,
+    blue = colors.blue,
+    blue_bright = colors.bright_blue,
+    magenta = colors.purple,
+    magenta_bright = colors.bright_purple,
+    cyan = colors.cyan,
+    cyan_bright = colors.bright_cyan,
+    white = colors.dark_fg,
+    white_bright = colors.fg,
+  }
+
+  return colors
+end
+
+return M
