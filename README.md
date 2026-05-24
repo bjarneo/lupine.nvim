@@ -2,8 +2,6 @@
 
 A light Neovim colorscheme with magenta-blue accents.
 
-![Lupine.nvim](theme.png)
-
 ## Requirements
 
 Neovim 0.8 or later with true color support enabled:
