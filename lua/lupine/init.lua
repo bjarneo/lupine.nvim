@@ -17,6 +17,13 @@ end
 ---@param opts? lupine.Config
 function M.setup(opts)
   require("lupine.config").setup(opts)
+  -- Invalidate any cached palette so consumers (e.g. lualine theme) that
+  -- read lupine.colorscheme before setup() see the new opts immediately,
+  -- not after the next :colorscheme call.
+  local ok, colorscheme = pcall(require, "lupine.colorscheme")
+  if ok then
+    colorscheme.invalidate()
+  end
 end
 
 return M

@@ -101,7 +101,7 @@ function M.setup(opts)
   }
 
   -- Derived colors
-  colors.black = Util.blend_bg(colors.bg, 0.8, colors.bg)
+  colors.black = Util.blend_fg(colors.bg, 0.85)
   colors.border_highlight = Util.blend_bg(colors.blue, 0.8)
   colors.border = colors.muted
 

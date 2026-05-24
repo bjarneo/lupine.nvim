@@ -1,5 +1,4 @@
 ---@class lupine.Config
----@field name? string Colorscheme name
 ---@field transparent? boolean Disable background color
 ---@field terminal_colors? boolean Configure terminal colors
 ---@field styles? lupine.Styles Syntax styling options
@@ -28,7 +27,6 @@ local M = {}
 
 ---@type lupine.Config
 M.defaults = {
-  name = "lupine",
   transparent = false,
   terminal_colors = true,
   styles = {
@@ -58,15 +56,12 @@ function M.setup(options)
 end
 
 ---Extend current options with overrides. Falls back to defaults when
----`setup` has not been called yet.
+---`setup` has not been called yet. Always returns a fresh table so
+---callers can mutate without polluting module-global state.
 ---@param opts? lupine.Config
 ---@return lupine.Config
 function M.extend(opts)
-  local base = M.options or M.defaults
-  if not opts then
-    return base
-  end
-  return vim.tbl_deep_extend("force", {}, base, opts)
+  return vim.tbl_deep_extend("force", {}, M.options or M.defaults, opts or {})
 end
 
 return M

@@ -19,7 +19,7 @@ function M.setup(opts)
   if opts.terminal_colors then
     vim.o.termguicolors = true
   end
-  vim.g.colors_name = opts.name
+  vim.g.colors_name = "lupine"
 
   -- Apply highlight groups
   for group, hl in pairs(groups) do

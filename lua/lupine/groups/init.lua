@@ -72,14 +72,15 @@ function M.setup(colors, opts)
   --                     timing bugs.
   --   * neither       - load only integrations explicitly opted in via
   --                     `plugins[name] = true`.
+  local plugins_opt = type(opts.plugins) == "table" and opts.plugins or {}
   for plugin, group_name in pairs(M.plugins) do
-    local explicit = opts.plugins[plugin]
+    local explicit = plugins_opt[plugin]
     local enabled
     if explicit == false then
       enabled = false
     elseif explicit == true then
       enabled = true
-    elseif opts.plugins.all or opts.plugins.auto then
+    elseif plugins_opt.all or plugins_opt.auto then
       enabled = true
     else
       enabled = false
